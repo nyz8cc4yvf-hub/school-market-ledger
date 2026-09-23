@@ -172,12 +172,58 @@
           <button id="exportSupplierMonthBtn" class="primary-btn" type="button">导出每家每月送货金额</button>
         </div>
       </section>
+
+      <section id="viewData" class="view">
+        <div class="section-head">
+          <h2>数据管理</h2>
+        </div>
+
+        <div class="summary-grid data-grid">
+          <article class="metric">
+            <span>进货记录</span>
+            <strong id="dataPurchaseCount">0</strong>
+          </article>
+          <article class="metric">
+            <span>营业额记录</span>
+            <strong id="dataRevenueCount">0</strong>
+          </article>
+          <article class="metric">
+            <span>单据照片</span>
+            <strong id="dataReceiptCount">0</strong>
+          </article>
+          <article class="metric">
+            <span>估算占用</span>
+            <strong id="dataStorageSize">0 KB</strong>
+          </article>
+        </div>
+
+        <div class="section-head">
+          <h2>备份恢复</h2>
+        </div>
+        <div class="form-panel action-panel">
+          <button id="exportBackupPanelBtn" class="primary-btn" type="button">导出完整备份</button>
+          <label class="import-box">
+            <span>导入备份</span>
+            <input id="importBackupInput" type="file" accept="application/json,.json">
+          </label>
+          <p class="help-text">导入会用备份文件覆盖当前手机里的账本数据。建议导入前先导出一次当前备份。</p>
+        </div>
+
+        <div class="section-head">
+          <h2>空间清理</h2>
+        </div>
+        <div class="form-panel action-panel">
+          <button id="clearReceiptsBtn" class="danger-btn" type="button">清理所有单据照片</button>
+          <p class="help-text">只删除照片，进货记录、金额、日期、状态和备注都会保留。手机空间紧张时可以用。</p>
+        </div>
+      </section>
     </main>
 
     <nav class="bottom-nav" aria-label="主导航">
       <button class="nav-btn is-active" data-view="viewHome">登记</button>
       <button class="nav-btn" data-view="viewRecords">记录</button>
       <button class="nav-btn" data-view="viewStats">统计</button>
+      <button class="nav-btn" data-view="viewData">数据</button>
     </nav>
   </div>
 
