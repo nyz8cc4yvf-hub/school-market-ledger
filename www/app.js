@@ -32,6 +32,9 @@ const els = {
   exportMonthInput: document.querySelector("#exportMonthInput"),
   exportSupplierMonthBtn: document.querySelector("#exportSupplierMonthBtn"),
   exportBackupBtn: document.querySelector("#exportBackupBtn"),
+  exportBackupPanelBtn: document.querySelector("#exportBackupPanelBtn"),
+  importBackupInput: document.querySelector("#importBackupInput"),
+  clearReceiptsBtn: document.querySelector("#clearReceiptsBtn"),
   dialog: document.querySelector("#recordDialog"),
   dialogTitle: document.querySelector("#dialogTitle"),
   dialogBody: document.querySelector("#dialogBody"),
@@ -230,6 +233,7 @@ function render() {
   renderHome();
   renderRecords();
   renderStats();
+  renderData();
 }
 
 function renderHome() {
@@ -351,6 +355,28 @@ function renderCompact(selector, records, status) {
       <span>${money(amount)}</span>
     </div>
   `).join("");
+}
+
+function formatBytes(bytes) {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
+}
+
+function estimateStorageBytes() {
+  try {
+    return new Blob([JSON.stringify(state)]).size;
+  } catch {
+    return JSON.stringify(state).length;
+  }
+}
+
+function renderData() {
+  const receiptCount = state.purchases.filter((item) => item.receipt).length;
+  document.querySelector("#dataPurchaseCount").textContent = String(state.purchases.length);
+  document.querySelector("#dataRevenueCount").textContent = String(state.revenues.length);
+  document.querySelector("#dataReceiptCount").textContent = String(receiptCount);
+  document.querySelector("#dataStorageSize").textContent = formatBytes(estimateStorageBytes());
 }
 
 function setRecordStatus(recordId, status) {
@@ -537,6 +563,64 @@ function exportBackup() {
   showToast("完整备份已导出");
 }
 
+function readTextFile(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result || ""));
+    reader.onerror = reject;
+    reader.readAsText(file, "utf-8");
+  });
+}
+
+async function importBackup(event) {
+  const file = event.target.files?.[0];
+  if (!file) return;
+
+  try {
+    const text = await readTextFile(file);
+    const parsed = JSON.parse(text);
+    const nextState = {
+      purchases: Array.isArray(parsed?.purchases) ? parsed.purchases.map(normalizeRecord) : null,
+      revenues: Array.isArray(parsed?.revenues) ? parsed.revenues.map(normalizeRevenue) : null,
+    };
+
+    if (!nextState.purchases || !nextState.revenues) {
+      showToast("备份文件格式不正确。");
+      return;
+    }
+
+    const ok = window.confirm("导入后会覆盖当前手机里的账本数据。确定继续吗？");
+    if (!ok) return;
+
+    state = nextState;
+    if (saveState()) {
+      render();
+      showToast("备份已导入");
+    }
+  } catch {
+    showToast("导入失败，请确认选择的是账本备份 JSON 文件。");
+  } finally {
+    els.importBackupInput.value = "";
+  }
+}
+
+function clearReceiptPhotos() {
+  const count = state.purchases.filter((item) => item.receipt).length;
+  if (!count) {
+    showToast("目前没有单据照片需要清理。");
+    return;
+  }
+
+  const ok = window.confirm(`确定清理 ${count} 张单据照片吗？进货金额和记录会保留。`);
+  if (!ok) return;
+
+  state.purchases = state.purchases.map((item) => ({ ...item, receipt: "" }));
+  if (saveState()) {
+    render();
+    showToast("单据照片已清理");
+  }
+}
+
 function bindEvents() {
   document.querySelectorAll(".nav-btn").forEach((button) => {
     button.addEventListener("click", () => {
@@ -575,6 +659,9 @@ function bindEvents() {
   els.closeDialogBtn.addEventListener("click", () => els.dialog.close());
   els.exportSupplierMonthBtn.addEventListener("click", exportSupplierMonth);
   els.exportBackupBtn.addEventListener("click", exportBackup);
+  els.exportBackupPanelBtn.addEventListener("click", exportBackup);
+  els.importBackupInput.addEventListener("change", importBackup);
+  els.clearReceiptsBtn.addEventListener("click", clearReceiptPhotos);
 }
 
 function init() {
