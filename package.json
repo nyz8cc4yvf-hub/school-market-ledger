@@ -1,0 +1,18 @@
+{
+  "name": "school-market-ledger",
+  "version": "1.0.0",
+  "private": true,
+  "description": "校园超市进货营业账本 Android APK builder",
+  "scripts": {
+    "android:add": "cap add android",
+    "android:sync": "cap sync android",
+    "android:build": "cd android && ./gradlew assembleDebug"
+  },
+  "dependencies": {
+    "@capacitor/android": "^7.4.3",
+    "@capacitor/core": "^7.4.3"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^7.4.3"
+  }
+}

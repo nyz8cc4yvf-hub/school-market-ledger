@@ -1,0 +1,7 @@
+node_modules/
+android/
+dist/
+*.apk
+*.aab
+npm-debug.log*
+package-lock.json

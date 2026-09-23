@@ -1,0 +1,9 @@
+{
+  "appId": "com.schoolmarket.ledger",
+  "appName": "校园超市账本",
+  "webDir": "www",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https"
+  }
+}
