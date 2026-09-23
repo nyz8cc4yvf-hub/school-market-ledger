@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>校园超市账本 APK 下载</title>
+  <meta name="description" content="校园超市账本 Android 安装包下载页面">
+  <link rel="icon" type="image/svg+xml" href="./icon.svg">
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #10231f;
+      --muted: #64746f;
+      --line: #dce7e2;
+      --paper: #ffffff;
+      --wash: #f5faf7;
+      --green: #176b5f;
+      --green-2: #20b99a;
+      --gold: #f2c46d;
+      --shadow: 0 24px 70px rgba(16, 35, 31, .12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", "PingFang SC", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 12% 12%, rgba(242, 196, 109, .20), transparent 28rem),
+        linear-gradient(160deg, #eef8f4 0%, #fbfdfb 48%, #f2f8f5 100%);
+      display: grid;
+      place-items: center;
+      padding: 34px 18px;
+    }
+
+    main {
+      width: min(100%, 520px);
+    }
+
+    .panel {
+      background: rgba(255, 255, 255, .88);
+      border: 1px solid rgba(220, 231, 226, .92);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      padding: 34px 24px 26px;
+      text-align: center;
+      backdrop-filter: blur(18px);
+    }
+
+    .icon {
+      width: 104px;
+      height: 104px;
+      border-radius: 24px;
+      box-shadow: 0 14px 34px rgba(23, 107, 95, .22);
+    }
+
+    h1 {
+      margin: 24px 0 10px;
+      font-size: clamp(2rem, 9vw, 2.8rem);
+      line-height: 1.08;
+      letter-spacing: 0;
+      font-weight: 760;
+    }
+
+    .sub {
+      margin: 0 auto;
+      max-width: 25rem;
+      color: var(--muted);
+      font-size: 1.02rem;
+      line-height: 1.7;
+    }
+
+    .device {
+      margin: 26px auto 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 40px;
+      padding: 0 15px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: var(--wash);
+      color: #263b36;
+      font-size: 1rem;
+      font-weight: 650;
+    }
+
+    .device svg {
+      width: 20px;
+      height: 20px;
+      fill: var(--green);
+      flex: 0 0 auto;
+    }
+
+    .qr {
+      width: 196px;
+      height: 196px;
+      margin: 34px auto 26px;
+      padding: 12px;
+      border-radius: 20px;
+      background: #fff;
+      border: 1px solid var(--line);
+      box-shadow: 0 12px 34px rgba(16, 35, 31, .08);
+    }
+
+    .qr img {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .download {
+      display: inline-flex;
+      width: min(100%, 356px);
+      height: 68px;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      border-radius: 999px;
+      color: #fff;
+      text-decoration: none;
+      font-size: 1.18rem;
+      font-weight: 780;
+      background: linear-gradient(135deg, var(--green), var(--green-2));
+      box-shadow: 0 18px 34px rgba(23, 107, 95, .25);
+      transition: transform .18s ease, box-shadow .18s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .download:active {
+      transform: translateY(1px) scale(.99);
+      box-shadow: 0 12px 24px rgba(23, 107, 95, .22);
+    }
+
+    .download svg {
+      width: 22px;
+      height: 22px;
+      stroke: currentColor;
+      stroke-width: 2.4;
+      fill: none;
+      flex: 0 0 auto;
+    }
+
+    .notes {
+      margin: 24px auto 0;
+      padding: 16px 16px 0;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: .94rem;
+      line-height: 1.75;
+      text-align: left;
+    }
+
+    .notes strong {
+      color: #b45e08;
+      font-weight: 700;
+    }
+
+    .small-link {
+      margin-top: 14px;
+      display: inline-block;
+      color: var(--green);
+      font-size: .92rem;
+      text-decoration: none;
+      font-weight: 650;
+    }
+
+    @media (max-width: 430px) {
+      body {
+        padding: 18px 12px;
+      }
+
+      .panel {
+        border-radius: 24px;
+        padding: 28px 18px 22px;
+      }
+
+      .icon {
+        width: 88px;
+        height: 88px;
+        border-radius: 21px;
+      }
+
+      .qr {
+        width: 178px;
+        height: 178px;
+        margin-top: 28px;
+      }
+
+      .download {
+        height: 62px;
+        font-size: 1.08rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="panel" aria-labelledby="app-title">
+      <img class="icon" src="./icon.svg" alt="">
+      <h1 id="app-title">校园超市账本</h1>
+      <p class="sub">进货记录、营业额、未结压单统计和数据导出，适合学校超市每天记账使用。</p>
+
+      <div class="device" aria-label="适用于 Android 设备">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M17.6 9H6.4A1.4 1.4 0 0 0 5 10.4v5.9a1.4 1.4 0 0 0 1.4 1.4h.7v2.1c0 .7.6 1.2 1.2 1.2s1.2-.5 1.2-1.2v-2.1h5v2.1c0 .7.6 1.2 1.2 1.2s1.2-.5 1.2-1.2v-2.1h.7a1.4 1.4 0 0 0 1.4-1.4v-5.9A1.4 1.4 0 0 0 17.6 9ZM8.2 7.4h7.6l-1-1.8a.55.55 0 0 1 .2-.8.58.58 0 0 1 .8.2L17 7.4h.6c.7 0 1.4.6 1.4 1.4v.1H5v-.1c0-.8.6-1.4 1.4-1.4H7L8.2 5a.58.58 0 0 1 .8-.2.55.55 0 0 1 .2.8l-1 1.8ZM3.2 10.2c.7 0 1.2.6 1.2 1.2v4.2c0 .7-.5 1.2-1.2 1.2S2 16.3 2 15.6v-4.2c0-.6.5-1.2 1.2-1.2Zm17.6 0c.7 0 1.2.6 1.2 1.2v4.2c0 .7-.5 1.2-1.2 1.2s-1.2-.5-1.2-1.2v-4.2c0-.6.5-1.2 1.2-1.2ZM9.1 11.7a.8.8 0 1 0 0-1.6.8.8 0 0 0 0 1.6Zm5.8 0a.8.8 0 1 0 0-1.6.8.8 0 0 0 0 1.6Z"/>
+        </svg>
+        适用于 Android 设备
+      </div>
+
+      <div class="qr" aria-label="扫码打开安装页面">
+        <img alt="校园超市账本安装二维码" src="https://api.qrserver.com/v1/create-qr-code/?size=344x344&margin=12&data=https%3A%2F%2Fnyz8cc4yvf-hub.github.io%2Fschool-market-ledger%2F">
+      </div>
+
+      <a class="download" href="https://github.com/nyz8cc4yvf-hub/school-market-ledger/releases/download/latest/school-market-ledger.apk">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 3v11m0 0 4-4m-4 4-4-4"/>
+          <path d="M5 17v2.5A1.5 1.5 0 0 0 6.5 21h11a1.5 1.5 0 0 0 1.5-1.5V17"/>
+        </svg>
+        下载安装
+      </a>
+
+      <div class="notes">
+        <strong>提示：</strong>安卓手机首次安装时，可能需要允许浏览器安装未知来源应用。安装完成后，数据默认保存在本机。
+      </div>
+
+      <a class="small-link" href="https://github.com/nyz8cc4yvf-hub/school-market-ledger/releases/tag/latest">查看版本文件</a>
+    </section>
+  </main>
+</body>
+</html>
