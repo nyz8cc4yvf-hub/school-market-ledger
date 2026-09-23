@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#176b5f">
+  <title>校园超市账本</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">校园超市</p>
+        <h1>进货营业账本</h1>
+      </div>
+      <button id="exportBackupBtn" class="icon-btn" title="导出备份">导出</button>
+    </header>
+
+    <main>
+      <section id="viewHome" class="view is-active">
+        <div class="summary-grid">
+          <article class="metric">
+            <span>未结金额</span>
+            <strong id="homeUnpaid">¥0.00</strong>
+          </article>
+          <article class="metric danger">
+            <span>压单金额</span>
+            <strong id="homeHeld">¥0.00</strong>
+          </article>
+          <article class="metric">
+            <span>本月营业额</span>
+            <strong id="homeRevenue">¥0.00</strong>
+          </article>
+          <article class="metric">
+            <span>本月利润</span>
+            <strong id="homeProfit">¥0.00</strong>
+          </article>
+        </div>
+
+        <div class="section-head">
+          <h2>进货登记</h2>
+        </div>
+        <form id="purchaseForm" class="form-panel">
+          <label>
+            <span>送货方</span>
+            <input id="supplierInput" type="text" placeholder="例如：张三饮料批发" required>
+          </label>
+          <div class="two-col">
+            <label>
+              <span>金额</span>
+              <input id="purchaseAmountInput" type="number" min="0" step="0.01" placeholder="0.00" required>
+            </label>
+            <label>
+              <span>日期</span>
+              <input id="purchaseDateInput" type="date" required>
+            </label>
+          </div>
+          <fieldset>
+            <legend>状态</legend>
+            <div class="segmented">
+              <label><input type="radio" name="status" value="paid" checked><span>已结</span></label>
+              <label><input type="radio" name="status" value="unpaid"><span>未结</span></label>
+              <label><input type="radio" name="status" value="held"><span>压单</span></label>
+            </div>
+          </fieldset>
+          <label>
+            <span>单据照片</span>
+            <input id="receiptInput" type="file" accept="image/*" capture="environment">
+          </label>
+          <label>
+            <span>备注</span>
+            <textarea id="purchaseNoteInput" rows="2" placeholder="可选"></textarea>
+          </label>
+          <button class="primary-btn" type="submit">保存进货记录</button>
+        </form>
+
+        <div class="section-head">
+          <h2>营业额登记</h2>
+        </div>
+        <form id="revenueForm" class="form-panel">
+          <div class="two-col">
+            <label>
+              <span>营业额</span>
+              <input id="revenueAmountInput" type="number" min="0" step="0.01" placeholder="0.00" required>
+            </label>
+            <label>
+              <span>日期</span>
+              <input id="revenueDateInput" type="date" required>
+            </label>
+          </div>
+          <label>
+            <span>备注</span>
+            <textarea id="revenueNoteInput" rows="2" placeholder="可选"></textarea>
+          </label>
+          <button class="primary-btn" type="submit">保存营业额</button>
+        </form>
+      </section>
+
+      <section id="viewRecords" class="view">
+        <div class="section-head">
+          <h2>送货记录</h2>
+          <button id="clearFiltersBtn" class="text-btn">清空筛选</button>
+        </div>
+        <div class="filter-panel">
+          <input id="searchInput" type="search" placeholder="搜索送货方名字">
+          <input id="dateFilterInput" type="date">
+          <select id="statusFilterInput">
+            <option value="">全部状态</option>
+            <option value="paid">已结</option>
+            <option value="unpaid">未结</option>
+            <option value="held">压单</option>
+          </select>
+        </div>
+        <div id="recordsList" class="record-list"></div>
+      </section>
+
+      <section id="viewStats" class="view">
+        <div class="section-head">
+          <h2>统计</h2>
+          <select id="statsRangeInput">
+            <option value="week">本周</option>
+            <option value="month" selected>本月</option>
+            <option value="year">本年</option>
+          </select>
+        </div>
+        <div class="summary-grid">
+          <article class="metric">
+            <span>总营业额</span>
+            <strong id="statsRevenue">¥0.00</strong>
+          </article>
+          <article class="metric">
+            <span>总送货金额</span>
+            <strong id="statsPurchases">¥0.00</strong>
+          </article>
+          <article class="metric">
+            <span>利润</span>
+            <strong id="statsProfit">¥0.00</strong>
+          </article>
+          <article class="metric danger">
+            <span>待处理</span>
+            <strong id="statsPending">¥0.00</strong>
+          </article>
+        </div>
+
+        <div class="section-head">
+          <h2>未结</h2>
+        </div>
+        <div id="unpaidList" class="compact-list"></div>
+
+        <div class="section-head">
+          <h2>压单</h2>
+        </div>
+        <div id="heldList" class="compact-list"></div>
+
+        <div class="section-head">
+          <h2>导出</h2>
+        </div>
+        <div class="form-panel">
+          <label>
+            <span>导出月份</span>
+            <input id="exportMonthInput" type="month">
+          </label>
+          <button id="exportSupplierMonthBtn" class="primary-btn" type="button">导出每家每月送货金额</button>
+        </div>
+      </section>
+    </main>
+
+    <nav class="bottom-nav" aria-label="主导航">
+      <button class="nav-btn is-active" data-view="viewHome">登记</button>
+      <button class="nav-btn" data-view="viewRecords">记录</button>
+      <button class="nav-btn" data-view="viewStats">统计</button>
+    </nav>
+  </div>
+
+  <dialog id="recordDialog">
+    <div class="dialog-head">
+      <h2 id="dialogTitle">记录详情</h2>
+      <button id="closeDialogBtn" class="icon-btn" type="button">关闭</button>
+    </div>
+    <div id="dialogBody"></div>
+  </dialog>
+
+  <script src="./app.js"></script>
+</body>
+</html>
