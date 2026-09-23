@@ -449,13 +449,33 @@ textarea {
   bottom: 0;
   z-index: 10;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   width: min(100%, 680px);
   padding: 9px 16px calc(9px + env(safe-area-inset-bottom));
   border-top: 1px solid var(--line);
   background: rgba(255, 255, 255, 0.95);
   transform: translateX(-50%);
   backdrop-filter: blur(12px);
+}
+
+.data-grid .metric strong {
+  font-size: clamp(20px, 6vw, 27px);
+}
+
+.action-panel {
+  display: grid;
+  gap: 12px;
+}
+
+.import-box {
+  margin: 0;
+}
+
+.help-text {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.65;
 }
 
 .nav-btn {
