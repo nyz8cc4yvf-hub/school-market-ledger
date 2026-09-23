@@ -12,10 +12,10 @@
   <div class="app-shell">
     <header class="topbar">
       <div>
-        <p class="eyebrow">校园超市</p>
-        <h1>进货营业账本</h1>
+        <p class="eyebrow">进货 / 营业 / 结款</p>
+        <h1>校园超市账本</h1>
       </div>
-      <button id="exportBackupBtn" class="icon-btn" title="导出备份">导出</button>
+      <button id="exportBackupBtn" class="icon-btn" title="导出完整备份">备份</button>
     </header>
 
     <main>
@@ -34,10 +34,11 @@
             <strong id="homeRevenue">¥0.00</strong>
           </article>
           <article class="metric">
-            <span>本月利润</span>
+            <span>本月预计利润</span>
             <strong id="homeProfit">¥0.00</strong>
           </article>
         </div>
+        <div id="todayStrip" class="today-strip"></div>
 
         <div class="section-head">
           <h2>进货登记</h2>
@@ -45,12 +46,13 @@
         <form id="purchaseForm" class="form-panel">
           <label>
             <span>送货方</span>
-            <input id="supplierInput" type="text" placeholder="例如：张三饮料批发" required>
+            <input id="supplierInput" type="text" list="supplierOptions" placeholder="例如：旺旺食品 / 张三饮料" autocomplete="off" required>
+            <datalist id="supplierOptions"></datalist>
           </label>
           <div class="two-col">
             <label>
               <span>金额</span>
-              <input id="purchaseAmountInput" type="number" min="0" step="0.01" placeholder="0.00" required>
+              <input id="purchaseAmountInput" type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="0.00" required>
             </label>
             <label>
               <span>日期</span>
@@ -68,10 +70,11 @@
           <label>
             <span>单据照片</span>
             <input id="receiptInput" type="file" accept="image/*" capture="environment">
+            <small>拍照会自动压缩保存，避免手机本地存储太快占满。</small>
           </label>
           <label>
             <span>备注</span>
-            <textarea id="purchaseNoteInput" rows="2" placeholder="可选"></textarea>
+            <textarea id="purchaseNoteInput" rows="2" placeholder="可选，例如：饮料、零食、日用品"></textarea>
           </label>
           <button class="primary-btn" type="submit">保存进货记录</button>
         </form>
@@ -83,7 +86,7 @@
           <div class="two-col">
             <label>
               <span>营业额</span>
-              <input id="revenueAmountInput" type="number" min="0" step="0.01" placeholder="0.00" required>
+              <input id="revenueAmountInput" type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="0.00" required>
             </label>
             <label>
               <span>日期</span>
@@ -101,7 +104,10 @@
       <section id="viewRecords" class="view">
         <div class="section-head">
           <h2>送货记录</h2>
-          <button id="clearFiltersBtn" class="text-btn">清空筛选</button>
+          <div class="head-actions">
+            <button id="todayFilterBtn" class="text-btn" type="button">今日</button>
+            <button id="clearFiltersBtn" class="text-btn" type="button">清空</button>
+          </div>
         </div>
         <div class="filter-panel">
           <input id="searchInput" type="search" placeholder="搜索送货方名字">
@@ -113,6 +119,7 @@
             <option value="held">压单</option>
           </select>
         </div>
+        <div id="daySummary" class="day-summary"></div>
         <div id="recordsList" class="record-list"></div>
       </section>
 
@@ -181,6 +188,7 @@
     </div>
     <div id="dialogBody"></div>
   </dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
   <script src="./app.js"></script>
 </body>
