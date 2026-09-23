@@ -1,16 +1,19 @@
 :root {
   color-scheme: light;
-  --bg: #f6f4ee;
+  --bg: #f4f6f3;
   --panel: #ffffff;
-  --ink: #18231f;
-  --muted: #66716b;
-  --line: #ddd8cc;
-  --brand: #176b5f;
-  --brand-dark: #0f4e47;
-  --paid: #16794c;
-  --unpaid: #c98213;
-  --held: #b63b3b;
-  --shadow: 0 10px 28px rgba(30, 35, 32, 0.08);
+  --ink: #15201d;
+  --muted: #65706b;
+  --soft: #eef3ef;
+  --line: #dce4df;
+  --brand: #155d52;
+  --brand-dark: #0d3e38;
+  --brand-soft: #dceee8;
+  --paid: #1f7a4d;
+  --unpaid: #ad7417;
+  --held: #a23c3c;
+  --shadow: 0 16px 36px rgba(25, 40, 34, 0.08);
+  --tight-shadow: 0 8px 18px rgba(25, 40, 34, 0.06);
 }
 
 * {
@@ -20,7 +23,9 @@
 body {
   margin: 0;
   min-height: 100vh;
-  background: var(--bg);
+  background:
+    linear-gradient(180deg, #e8f0eb 0, var(--bg) 220px),
+    var(--bg);
   color: var(--ink);
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
@@ -36,7 +41,7 @@ select {
   width: min(100%, 680px);
   min-height: 100vh;
   margin: 0 auto;
-  padding: env(safe-area-inset-top) 14px calc(84px + env(safe-area-inset-bottom));
+  padding: env(safe-area-inset-top) 16px calc(92px + env(safe-area-inset-bottom));
 }
 
 .topbar {
@@ -47,15 +52,16 @@ select {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 18px 0 12px;
-  background: linear-gradient(var(--bg) 72%, rgba(246, 244, 238, 0));
+  padding: 18px 0 14px;
+  background: linear-gradient(#e8f0eb 76%, rgba(232, 240, 235, 0));
 }
 
 .eyebrow {
   margin: 0 0 2px;
   color: var(--brand);
-  font-size: 13px;
-  font-weight: 700;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
 }
 
 h1,
@@ -65,11 +71,13 @@ h2 {
 }
 
 h1 {
-  font-size: 24px;
+  font-size: 25px;
+  font-weight: 900;
 }
 
 h2 {
-  font-size: 18px;
+  font-size: 17px;
+  font-weight: 900;
 }
 
 .section-head {
@@ -77,7 +85,7 @@ h2 {
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  margin: 22px 0 10px;
+  margin: 24px 0 10px;
 }
 
 .view {
@@ -91,29 +99,30 @@ h2 {
 .summary-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
+  gap: 11px;
 }
 
 .metric {
-  min-height: 88px;
-  padding: 14px;
-  border: 1px solid var(--line);
+  min-height: 96px;
+  padding: 15px;
+  border: 1px solid rgba(21, 93, 82, 0.10);
   border-radius: 8px;
-  background: var(--panel);
+  background: linear-gradient(180deg, #ffffff, #fbfdfa);
   box-shadow: var(--shadow);
 }
 
 .metric span {
   display: block;
   color: var(--muted);
-  font-size: 13px;
+  font-size: 12px;
+  font-weight: 800;
 }
 
 .metric strong {
   display: block;
   margin-top: 8px;
   color: var(--brand-dark);
-  font-size: clamp(20px, 7vw, 28px);
+  font-size: clamp(21px, 7vw, 29px);
   line-height: 1.05;
   overflow-wrap: anywhere;
 }
@@ -124,11 +133,11 @@ h2 {
 
 .form-panel,
 .filter-panel {
-  padding: 14px;
+  padding: 15px;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--panel);
-  box-shadow: var(--shadow);
+  box-shadow: var(--tight-shadow);
 }
 
 label,
@@ -143,20 +152,20 @@ fieldset {
 label span,
 legend {
   color: var(--muted);
-  font-size: 13px;
-  font-weight: 700;
+  font-size: 12px;
+  font-weight: 850;
 }
 
 input,
 textarea,
 select {
   width: 100%;
-  min-height: 44px;
+  min-height: 46px;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: #fffdfa;
+  background: #fbfdfa;
   color: var(--ink);
-  padding: 10px 12px;
+  padding: 11px 12px;
   outline: none;
 }
 
@@ -195,24 +204,25 @@ textarea {
 
 .segmented span {
   display: grid;
-  min-height: 42px;
+  min-height: 44px;
   place-items: center;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: #fffdfa;
+  background: #fbfdfa;
   color: var(--ink);
+  font-weight: 850;
 }
 
 .segmented input:checked + span {
   border-color: var(--brand);
-  background: #e3f2ed;
+  background: var(--brand-soft);
   color: var(--brand-dark);
 }
 
 .primary-btn,
 .icon-btn,
 .text-btn {
-  min-height: 42px;
+  min-height: 44px;
   border: 0;
   border-radius: 8px;
   cursor: pointer;
@@ -221,13 +231,14 @@ textarea {
 
 .primary-btn {
   width: 100%;
-  background: var(--brand);
+  background: linear-gradient(180deg, #196b5e, var(--brand-dark));
   color: #fff;
   padding: 11px 14px;
+  box-shadow: 0 10px 20px rgba(13, 62, 56, 0.18);
 }
 
 .icon-btn {
-  background: #e7eee9;
+  background: #dfece7;
   color: var(--brand-dark);
   padding: 0 12px;
 }
@@ -253,16 +264,18 @@ textarea {
 .record-card,
 .compact-row {
   border: 1px solid var(--line);
-  border-left: 6px solid var(--paid);
+  border-left: 5px solid var(--paid);
   border-radius: 8px;
   background: var(--panel);
-  box-shadow: var(--shadow);
+  box-shadow: var(--tight-shadow);
 }
 
 .record-card {
   display: grid;
   gap: 8px;
   padding: 13px;
+  text-align: left;
+  color: var(--ink);
 }
 
 .compact-row {
@@ -289,13 +302,13 @@ textarea {
 
 .record-name {
   min-width: 0;
-  font-weight: 850;
+  font-weight: 900;
   overflow-wrap: anywhere;
 }
 
 .record-amount {
   white-space: nowrap;
-  font-weight: 850;
+  font-weight: 900;
 }
 
 .record-meta {
@@ -311,22 +324,24 @@ textarea {
   min-height: 24px;
   place-items: center;
   border-radius: 999px;
-  padding: 2px 9px;
-  color: #fff;
+  padding: 2px 10px;
   font-size: 12px;
   font-weight: 800;
 }
 
 .pill.paid {
-  background: var(--paid);
+  background: #e0f1e7;
+  color: var(--paid);
 }
 
 .pill.unpaid {
-  background: var(--unpaid);
+  background: #f7ead2;
+  color: var(--unpaid);
 }
 
 .pill.held {
-  background: var(--held);
+  background: #f3dfdf;
+  color: var(--held);
 }
 
 .empty {
@@ -345,15 +360,15 @@ textarea {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   width: min(100%, 680px);
-  padding: 8px 14px calc(8px + env(safe-area-inset-bottom));
+  padding: 9px 16px calc(9px + env(safe-area-inset-bottom));
   border-top: 1px solid var(--line);
-  background: rgba(255, 253, 250, 0.95);
+  background: rgba(255, 255, 255, 0.95);
   transform: translateX(-50%);
   backdrop-filter: blur(12px);
 }
 
 .nav-btn {
-  min-height: 46px;
+  min-height: 48px;
   border: 0;
   border-radius: 8px;
   background: transparent;
@@ -362,7 +377,7 @@ textarea {
 }
 
 .nav-btn.is-active {
-  background: #e3f2ed;
+  background: var(--brand-soft);
   color: var(--brand-dark);
 }
 
