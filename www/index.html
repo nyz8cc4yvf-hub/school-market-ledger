@@ -120,7 +120,10 @@
           </select>
         </div>
         <div id="daySummary" class="day-summary"></div>
+        <div class="list-title">送货记录</div>
         <div id="recordsList" class="record-list"></div>
+        <div class="list-title">营业额记录</div>
+        <div id="revenueRecordsList" class="record-list"></div>
       </section>
 
       <section id="viewStats" class="view">
@@ -206,7 +209,7 @@
             <span>导入备份</span>
             <input id="importBackupInput" type="file" accept="application/json,.json">
           </label>
-          <p class="help-text">导入会用备份文件覆盖当前手机里的账本数据。建议导入前先导出一次当前备份。</p>
+          <p class="help-text">导出的 JSON 文件通常在手机“下载”或“Download”文件夹里，文件名会带“校园超市账本-完整备份”。导入会覆盖当前手机里的账本数据，建议导入前先导出一次当前备份。</p>
         </div>
 
         <div class="section-head">

@@ -23,6 +23,7 @@ const els = {
   todayStrip: document.querySelector("#todayStrip"),
   daySummary: document.querySelector("#daySummary"),
   recordsList: document.querySelector("#recordsList"),
+  revenueRecordsList: document.querySelector("#revenueRecordsList"),
   searchInput: document.querySelector("#searchInput"),
   dateFilterInput: document.querySelector("#dateFilterInput"),
   statusFilterInput: document.querySelector("#statusFilterInput"),
@@ -51,6 +52,13 @@ function localDate() {
   const month = String(now.getMonth() + 1).padStart(2, "0");
   const day = String(now.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
+}
+
+function localTimeStamp() {
+  const now = new Date();
+  const hours = String(now.getHours()).padStart(2, "0");
+  const minutes = String(now.getMinutes()).padStart(2, "0");
+  return `${localDate()}-${hours}${minutes}`;
 }
 
 function currentMonth() {
@@ -300,6 +308,7 @@ function renderRecords() {
 
   if (!records.length) {
     els.recordsList.innerHTML = `<div class="empty">没有找到送货记录</div>`;
+    renderRevenueRecords();
     return;
   }
 
@@ -313,6 +322,33 @@ function renderRecords() {
         <span>${item.date}</span>
         <span class="pill ${item.status}">${statusText[item.status]}</span>
         ${item.receipt ? "<span>有单据照片</span>" : "<span>无照片</span>"}
+      </div>
+      ${item.note ? `<div class="record-note">${escapeHtml(item.note)}</div>` : ""}
+    </button>
+  `).join("");
+
+  renderRevenueRecords();
+}
+
+function renderRevenueRecords() {
+  const date = els.dateFilterInput.value;
+  const revenues = state.revenues
+    .filter((item) => !date || item.date === date)
+    .sort(sortByNewest);
+
+  if (!revenues.length) {
+    els.revenueRecordsList.innerHTML = `<div class="empty">没有找到营业额记录</div>`;
+    return;
+  }
+
+  els.revenueRecordsList.innerHTML = revenues.map((item) => `
+    <button class="record-card revenue-card" data-revenue-id="${item.id}" type="button">
+      <div class="record-top">
+        <span class="record-name">营业额</span>
+        <span class="record-amount">${money(item.amount)}</span>
+      </div>
+      <div class="record-meta">
+        <span>${item.date}</span>
       </div>
       ${item.note ? `<div class="record-note">${escapeHtml(item.note)}</div>` : ""}
     </button>
@@ -403,12 +439,57 @@ function deleteRecord(recordId) {
   }
 }
 
-function showRecord(recordId) {
+function showRecord(recordId, mode = "view") {
   const item = state.purchases.find((record) => record.id === recordId);
   if (!item) return;
 
   els.dialogTitle.textContent = item.supplier;
-  els.dialogBody.innerHTML = `
+  if (mode === "edit") {
+    els.dialogBody.innerHTML = `
+      <form class="detail-grid edit-form" data-edit-purchase-form="${item.id}">
+        <label>
+          <span>送货方</span>
+          <input name="supplier" type="text" value="${escapeHtml(item.supplier)}" required>
+        </label>
+        <div class="two-col">
+          <label>
+            <span>金额</span>
+            <input name="amount" type="number" min="0.01" step="0.01" inputmode="decimal" value="${item.amount}" required>
+          </label>
+          <label>
+            <span>日期</span>
+            <input name="date" type="date" value="${item.date}" required>
+          </label>
+        </div>
+        <fieldset>
+          <legend>状态</legend>
+          <div class="segmented">
+            ${statusOrder.map((status) => `
+              <label><input type="radio" name="status" value="${status}" ${item.status === status ? "checked" : ""}><span>${statusText[status]}</span></label>
+            `).join("")}
+          </div>
+        </fieldset>
+        <label>
+          <span>单据照片</span>
+          <input name="receipt" type="file" accept="image/*" capture="environment">
+          <small>不选择新照片就保留原照片；选择新照片会自动压缩替换。</small>
+        </label>
+        <label class="checkbox-row">
+          <input name="removeReceipt" type="checkbox" ${item.receipt ? "" : "disabled"}>
+          <span>删除当前单据照片</span>
+        </label>
+        <label>
+          <span>备注</span>
+          <textarea name="note" rows="2">${escapeHtml(item.note)}</textarea>
+        </label>
+        <div class="dialog-actions">
+          <button class="primary-btn" type="submit">保存修改</button>
+          <button class="secondary-btn" data-show-record-id="${item.id}" type="button">取消编辑</button>
+        </div>
+      </form>
+    `;
+  } else {
+    els.dialogBody.innerHTML = `
     <div class="detail-grid">
       <p class="detail-line"><strong>金额：</strong>${money(item.amount)}</p>
       <p class="detail-line"><strong>日期：</strong>${item.date}</p>
@@ -422,17 +503,181 @@ function showRecord(recordId) {
             </button>
           `).join("")}
         </div>
+        <button class="secondary-btn" data-edit-record-id="${item.id}" type="button">编辑记录</button>
         <button class="danger-btn" data-delete-id="${item.id}" type="button">删除这条记录</button>
       </div>
       ${item.receipt ? `<img src="${item.receipt}" alt="单据照片">` : `<div class="empty">没有上传单据照片</div>`}
     </div>
   `;
+  }
 
   if (typeof els.dialog.showModal === "function") {
     if (!els.dialog.open) els.dialog.showModal();
   } else {
     alert(`${item.supplier}\n金额：${money(item.amount)}\n日期：${item.date}\n状态：${statusText[item.status]}`);
   }
+}
+
+async function saveRecordEdit(event) {
+  event.preventDefault();
+  const form = event.target;
+  const item = state.purchases.find((record) => record.id === form.dataset.editPurchaseForm);
+  if (!item) return;
+
+  const formData = new FormData(form);
+  const supplier = String(formData.get("supplier") || "").trim();
+  const amount = parseAmount(formData.get("amount"));
+  const date = String(formData.get("date") || "");
+  const status = String(formData.get("status") || "paid");
+
+  if (!supplier) {
+    showToast("请填写送货方。");
+    form.elements.supplier.focus();
+    return;
+  }
+  if (amount <= 0) {
+    showToast("进货金额必须大于 0。");
+    form.elements.amount.focus();
+    return;
+  }
+  if (!date) {
+    showToast("请选择进货日期。");
+    form.elements.date.focus();
+    return;
+  }
+
+  let receipt = item.receipt;
+  const file = form.elements.receipt.files?.[0];
+  if (formData.get("removeReceipt")) {
+    receipt = "";
+  }
+  if (file) {
+    try {
+      receipt = await readCompressedImage(file);
+    } catch {
+      showToast("单据照片读取失败，请换一张或先不上传。");
+      return;
+    }
+  }
+
+  const previous = { ...item };
+  Object.assign(item, {
+    supplier,
+    amount,
+    date,
+    status: statusText[status] ? status : "paid",
+    receipt,
+    note: String(formData.get("note") || "").trim(),
+  });
+
+  if (!saveState()) {
+    Object.assign(item, previous);
+    return;
+  }
+
+  render();
+  showRecord(item.id);
+  showToast("送货记录已修改");
+}
+
+function deleteRevenueRecord(recordId) {
+  const item = state.revenues.find((record) => record.id === recordId);
+  if (!item) return;
+  const ok = window.confirm(`确定删除 ${item.date} ${money(item.amount)} 这条营业额记录吗？`);
+  if (!ok) return;
+  state.revenues = state.revenues.filter((record) => record.id !== recordId);
+  if (saveState()) {
+    els.dialog.close();
+    render();
+    showToast("营业额记录已删除");
+  }
+}
+
+function showRevenueRecord(recordId, mode = "view") {
+  const item = state.revenues.find((record) => record.id === recordId);
+  if (!item) return;
+
+  els.dialogTitle.textContent = "营业额记录";
+  if (mode === "edit") {
+    els.dialogBody.innerHTML = `
+      <form class="detail-grid edit-form" data-edit-revenue-form="${item.id}">
+        <div class="two-col">
+          <label>
+            <span>营业额</span>
+            <input name="amount" type="number" min="0.01" step="0.01" inputmode="decimal" value="${item.amount}" required>
+          </label>
+          <label>
+            <span>日期</span>
+            <input name="date" type="date" value="${item.date}" required>
+          </label>
+        </div>
+        <label>
+          <span>备注</span>
+          <textarea name="note" rows="2">${escapeHtml(item.note)}</textarea>
+        </label>
+        <div class="dialog-actions">
+          <button class="primary-btn" type="submit">保存修改</button>
+          <button class="secondary-btn" data-show-revenue-id="${item.id}" type="button">取消编辑</button>
+        </div>
+      </form>
+    `;
+  } else {
+    els.dialogBody.innerHTML = `
+      <div class="detail-grid">
+        <p class="detail-line"><strong>金额：</strong>${money(item.amount)}</p>
+        <p class="detail-line"><strong>日期：</strong>${item.date}</p>
+        ${item.note ? `<p class="detail-line"><strong>备注：</strong>${escapeHtml(item.note)}</p>` : ""}
+        <div class="dialog-actions">
+          <button class="secondary-btn" data-edit-revenue-id="${item.id}" type="button">编辑记录</button>
+          <button class="danger-btn" data-delete-revenue-id="${item.id}" type="button">删除这条记录</button>
+        </div>
+      </div>
+    `;
+  }
+
+  if (typeof els.dialog.showModal === "function") {
+    if (!els.dialog.open) els.dialog.showModal();
+  } else {
+    alert(`营业额\n金额：${money(item.amount)}\n日期：${item.date}`);
+  }
+}
+
+function saveRevenueEdit(event) {
+  event.preventDefault();
+  const form = event.target;
+  const item = state.revenues.find((record) => record.id === form.dataset.editRevenueForm);
+  if (!item) return;
+
+  const formData = new FormData(form);
+  const amount = parseAmount(formData.get("amount"));
+  const date = String(formData.get("date") || "");
+
+  if (amount <= 0) {
+    showToast("营业额必须大于 0。");
+    form.elements.amount.focus();
+    return;
+  }
+  if (!date) {
+    showToast("请选择营业额日期。");
+    form.elements.date.focus();
+    return;
+  }
+
+  const previous = { ...item };
+  Object.assign(item, {
+    amount,
+    date,
+    note: String(formData.get("note") || "").trim(),
+  });
+
+  if (!saveState()) {
+    Object.assign(item, previous);
+    return;
+  }
+
+  render();
+  showRevenueRecord(item.id);
+  showToast("营业额记录已修改");
 }
 
 async function handlePurchaseSubmit(event) {
@@ -559,8 +804,9 @@ function exportSupplierMonth() {
 }
 
 function exportBackup() {
-  download(`校园超市账本备份-${localDate()}.json`, JSON.stringify(state, null, 2), "application/json;charset=utf-8");
-  showToast("完整备份已导出");
+  const filename = `校园超市账本-完整备份-${localTimeStamp()}.json`;
+  download(filename, JSON.stringify(state, null, 2), "application/json;charset=utf-8");
+  showToast(`备份已导出：去手机“下载/Download”里找 ${filename}`);
 }
 
 function readTextFile(file) {
@@ -650,11 +896,29 @@ function bindEvents() {
     const card = event.target.closest("[data-record-id]");
     if (card) showRecord(card.dataset.recordId);
   });
+  els.revenueRecordsList.addEventListener("click", (event) => {
+    const card = event.target.closest("[data-revenue-id]");
+    if (card) showRevenueRecord(card.dataset.revenueId);
+  });
   els.dialogBody.addEventListener("click", (event) => {
     const statusButton = event.target.closest("[data-status]");
     const deleteButton = event.target.closest("[data-delete-id]");
+    const editButton = event.target.closest("[data-edit-record-id]");
+    const showButton = event.target.closest("[data-show-record-id]");
+    const editRevenueButton = event.target.closest("[data-edit-revenue-id]");
+    const showRevenueButton = event.target.closest("[data-show-revenue-id]");
+    const deleteRevenueButton = event.target.closest("[data-delete-revenue-id]");
     if (statusButton) setRecordStatus(statusButton.dataset.recordId, statusButton.dataset.status);
     if (deleteButton) deleteRecord(deleteButton.dataset.deleteId);
+    if (editButton) showRecord(editButton.dataset.editRecordId, "edit");
+    if (showButton) showRecord(showButton.dataset.showRecordId);
+    if (editRevenueButton) showRevenueRecord(editRevenueButton.dataset.editRevenueId, "edit");
+    if (showRevenueButton) showRevenueRecord(showRevenueButton.dataset.showRevenueId);
+    if (deleteRevenueButton) deleteRevenueRecord(deleteRevenueButton.dataset.deleteRevenueId);
+  });
+  els.dialogBody.addEventListener("submit", (event) => {
+    if (event.target.matches("[data-edit-purchase-form]")) saveRecordEdit(event);
+    if (event.target.matches("[data-edit-revenue-form]")) saveRevenueEdit(event);
   });
   els.closeDialogBtn.addEventListener("click", () => els.dialog.close());
   els.exportSupplierMonthBtn.addEventListener("click", exportSupplierMonth);

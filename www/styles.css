@@ -263,6 +263,7 @@ textarea {
 }
 
 .primary-btn,
+.secondary-btn,
 .icon-btn,
 .text-btn {
   min-height: 44px;
@@ -278,6 +279,14 @@ textarea {
   color: #fff;
   padding: 11px 14px;
   box-shadow: 0 10px 20px rgba(13, 62, 56, 0.18);
+}
+
+.secondary-btn {
+  width: 100%;
+  border: 1px solid var(--line);
+  background: #fbfdfa;
+  color: var(--brand-dark);
+  padding: 11px 14px;
 }
 
 .icon-btn {
@@ -338,6 +347,13 @@ textarea {
   gap: 10px;
 }
 
+.list-title {
+  margin: 16px 0 9px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 900;
+}
+
 .record-card,
 .compact-row {
   border: 1px solid var(--line);
@@ -355,8 +371,14 @@ textarea {
   color: var(--ink);
 }
 
+.revenue-card {
+  border-left-color: var(--brand);
+}
+
 .record-card:active,
 .primary-btn:active,
+.secondary-btn:active,
+.danger-btn:active,
 .icon-btn:active,
 .text-btn:active,
 .nav-btn:active {
@@ -534,6 +556,29 @@ dialog::backdrop {
 .status-actions {
   display: grid;
   gap: 8px;
+}
+
+.edit-form {
+  gap: 12px;
+}
+
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0;
+}
+
+.checkbox-row input {
+  width: 18px;
+  min-height: 18px;
+  accent-color: var(--brand);
+}
+
+.checkbox-row span {
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 800;
 }
 
 .status-actions {
