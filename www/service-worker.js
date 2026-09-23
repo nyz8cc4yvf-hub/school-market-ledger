@@ -1,4 +1,4 @@
-const CACHE_NAME = "school-market-ledger-v2";
+const CACHE_NAME = "school-market-ledger-v3";
 const ASSETS = [
   "./",
   "./index.html",
