@@ -1,5 +1,8 @@
 name: Build Android APK
 
+permissions:
+  contents: write
+
 on:
   workflow_dispatch:
   push:
@@ -45,3 +48,12 @@ jobs:
         with:
           name: school-market-ledger-debug-apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Publish public APK release
+        if: github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cp android/app/build/outputs/apk/debug/app-debug.apk school-market-ledger.apk
+          gh release delete latest --yes --cleanup-tag || true
+          gh release create latest school-market-ledger.apk --title "校园超市账本 APK" --notes "安卓手机直接下载 school-market-ledger.apk 后打开安装。"
